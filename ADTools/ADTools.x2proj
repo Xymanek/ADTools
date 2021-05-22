@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Default" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Guid>df09e694-cdaa-4f15-90b1-d24a94f3be15</Guid>
+    <Name>AD Tools</Name>
+    <Description>Astral Descend's toolkit</Description>
+    <SteamPublishID>0</SteamPublishID>
+    <AssemblyName>ADTools</AssemblyName>
+    <RootNamespace>ADTools</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Content\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Src\ADTools\" />
+    <Folder Include="Src\ADTools\Classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ReadMe.txt" />
+    <Content Include="ModPreview.jpg" />
+    <Content Include="Config\XComEditor.ini" />
+    <Content Include="Config\XComEngine.ini" />
+    <Content Include="Config\XComGame.ini" />
+    <Content Include="Localization\ADTools.int" />
+    <Content Include="Src\ADTools\Classes\ConfigContainer.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\ADTools\Classes\X2DownloadableContentInfo_ADTools.uc" />
+  </ItemGroup>
+  <Import Project="$(MSBuildLocalExtensionPath)\XCOM2.targets" />
+</Project>
