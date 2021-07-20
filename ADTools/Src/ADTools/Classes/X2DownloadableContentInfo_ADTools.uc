@@ -207,6 +207,32 @@ exec function AD_DumpReferencer (string ObjectName)
 	`log("======================================================= END",, GetFuncName());
 }
 
+exec function AD_SpawnStaticMeshAtCamera (string ObjectPath)
+{
+	local DynamicSMActor_Spawnable Actor;
+	local rotator CameraRotation;
+	local vector CameraLocation;
+	local StaticMesh Mesh;
+	local WorldInfo World;
+
+	Mesh = StaticMesh(DynamicLoadObject(ObjectPath, class'StaticMesh'));
+	if (Mesh == none)
+	{
+		`log("Failed to load mesh" @ ObjectPath,, GetFuncName());
+		return;
+	}
+
+	World = class'WorldInfo'.static.GetWorldInfo();
+
+	World.GetALocalPlayerController().GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+	Actor = World.Spawn(class'DynamicSMActor_Spawnable');
+	Actor.SetStaticMesh(Mesh);
+	Actor.SetLocation(CameraLocation);
+
+	`log(PathName(Actor) @ Actor.Location,, GetFuncName());
+}
+
 //exec function AD_TestConfigReading ()
 //{
 //	local Package p;
@@ -220,3 +246,64 @@ exec function AD_DumpReferencer (string ObjectName)
 //
 //	GenericDumpObject("", p, 'AD_TestConfigReading');
 //}
+
+exec function AD_ListFramesWithObject (int ObjectID)
+{
+	local XComGameState_BaseObject StateObject;
+	local XComGameStateContext Context;
+	local XComGameState Frame;
+
+	`log("======================================================= BEGIN",, GetFuncName());
+	`log(`showvar(ObjectID),, GetFuncName());
+
+	StateObject = `XCOMHISTORY.GetGameStateForObjectID(ObjectID);
+	
+	if (StateObject == none)
+	{
+		`log("Object not found",, GetFuncName());
+	}
+	else
+	{
+		while (StateObject != none)
+		{
+			Frame = StateObject.GetParentGameState();
+			Context = Frame.GetContext();
+
+			`log(Frame.HistoryIndex @ Context.Class.Name @ Context.SummaryString(),, GetFuncName());
+
+			StateObject = StateObject.GetPreviousVersion();
+		}
+	}
+
+	`log("======================================================= END",, GetFuncName());
+}
+
+exec function AD_ListGameStateObjectsWithBaseClass (name ClassName)
+{
+	local XComGameState_BaseObject StateObject;
+	local XComGameStateHistory History;
+	local object IterItem;
+	local class TheClass;
+
+	`log("======================================================= BEGIN",, GetFuncName());
+	`log(ClassName,, GetFuncName());
+
+	TheClass = class'XComEngine'.static.GetClassByName(ClassName);
+	
+	if (TheClass == none)
+	{
+		`log("Failed to find the class" ,, GetFuncName());
+		return;
+	}
+
+	History = `XCOMHISTORY;
+
+	foreach History.IterateByClassType(TheClass, IterItem)
+	{
+		StateObject = XComGameState_BaseObject(IterItem);
+		`log(StateObject.ObjectID @ IterItem.Class.Name @ StateObject.GetMyTemplateName(),, GetFuncName());
+	}
+
+	`log("======================================================= END",, GetFuncName());
+}
+
