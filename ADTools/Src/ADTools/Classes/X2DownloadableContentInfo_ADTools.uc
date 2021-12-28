@@ -1,5 +1,7 @@
 class X2DownloadableContentInfo_ADTools extends X2DownloadableContentInfo;
 
+delegate AD_TestDelegateTemplate();
+
 exec function ForceRefreshGamepads()
 {
     `ONLINEEVENTMGR.EnumGamepads_PC();
@@ -307,3 +309,127 @@ exec function AD_ListGameStateObjectsWithBaseClass (name ClassName)
 	`log("======================================================= END",, GetFuncName());
 }
 
+exec function AD_DumpCampaignSettings ()
+{
+	local XComGameState_CampaignSettings CampaignSettings;
+	
+	`log("======================================================= BEGIN",, GetFuncName());
+
+	CampaignSettings = XComGameState_CampaignSettings(class'XComGameStateHistory'.static.GetGameStateHistory().GetSingleGameStateObjectForClass(class'XComGameState_CampaignSettings', true));
+
+	`log(`showvar(CampaignSettings.StartTime),, GetFuncName());
+	`log(`showvar(CampaignSettings.GameIndex),, GetFuncName());
+	`log(`showvar(CampaignSettings.DifficultySetting),, GetFuncName());
+	`log(`showvar(CampaignSettings.LowestDifficultySetting),, GetFuncName());
+	`log(`showvar(CampaignSettings.bIronmanEnabled),, GetFuncName());
+	`log(`showvar(CampaignSettings.bTutorialEnabled),, GetFuncName());
+	`log(`showvar(CampaignSettings.bXPackNarrativeEnabled),, GetFuncName());
+	`log(`showvar(CampaignSettings.bIntegratedDLCEnabled),, GetFuncName());
+	`log(`showvar(CampaignSettings.bSuppressFirstTimeNarrative),, GetFuncName());
+	`log(`showvar(CampaignSettings.bCheatStart),, GetFuncName());
+	`log(`showvar(CampaignSettings.bSkipFirstTactical),, GetFuncName());
+	`log(`showvar(CampaignSettings.BizAnalyticsCampaignID),, GetFuncName());
+	`log(`showvar(CampaignSettings.TLEInstalled),, GetFuncName());
+	`log(`showvar(CampaignSettings.TacticalDifficulty),, GetFuncName());
+	`log(`showvar(CampaignSettings.StrategyDifficulty),, GetFuncName());
+	`log(`showvar(CampaignSettings.GameLength),, GetFuncName());
+
+	`log("======================================================= END",, GetFuncName());
+}
+
+exec function AD_IterateCampaignSettings ()
+{
+	local XComGameState_CampaignSettings CampaignSettings;
+	local XComGameStateHistory History;
+
+	`log("======================================================= BEGIN",, GetFuncName());
+
+	History = `XCOMHISTORY;
+
+	foreach History.IterateByClassType(class'XComGameState_CampaignSettings', CampaignSettings)
+	{
+		`log(`showvar(CampaignSettings.ObjectID) @ PathName(CampaignSettings),, GetFuncName());
+	}
+
+	`log("======================================================= END",, GetFuncName());
+}
+
+exec function AD_TestBasicSaveObject ()
+{
+	local AD_TestObj TestObj;
+	local bool Success;
+
+	TestObj = new class'AD_TestObj';
+	TestObj.strTest = "bla bla bla bla 10";
+	TestObj.iTest = 2;
+
+	Success = class'Engine'.static.BasicSaveObject(TestObj, class'Engine'.static.GetEnvironmentVariable("USERPROFILE") $ "\\AdTestObj.bin", false, 1);
+	`log(`showvar(Success),, GetFuncName());
+}
+
+exec function AD_TestBasicLoadObject ()
+{
+	local AD_TestObj TestObj;
+	local bool Success;
+
+	TestObj = new class'AD_TestObj';
+	
+	Success = class'Engine'.static.BasicLoadObject(TestObj, class'Engine'.static.GetEnvironmentVariable("USERPROFILE") $ "\\AdTestObj.bin", false, 1);
+
+	`log(`showvar(Success),, GetFuncName());
+	`log(`showvar(TestObj.strTest),, GetFuncName());
+	`log(`showvar(TestObj.iTest),, GetFuncName());
+}
+
+exec function AD_GetEnvironmentVariable (string VariableName)
+{
+	`log(class'Engine'.static.GetEnvironmentVariable(VariableName),, GetFuncName());
+}
+
+exec function AD_DumpSpawnDistributionLists ()
+{
+	local XComTacticalMissionManager MissionManager;
+	local SpawnDistributionListEntry CurrentEntry;
+	local SpawnDistributionList CurrentList;
+
+	local array<string> LineElements;
+	local string Line;
+
+	`log("=========================== BEGIN",, GetFuncName());
+
+	MissionManager = `TACTICALMISSIONMGR;
+
+	// Headers
+
+	LineElements.AddItem("ListID");
+	LineElements.AddItem("CharacterTemplate");
+	LineElements.AddItem("MinForceLevel");
+	LineElements.AddItem("MaxForceLevel");
+	LineElements.AddItem("MaxCharactersPerGroup");
+	LineElements.AddItem("SpawnWeight");
+			
+	JoinArray(LineElements, Line, ",");
+	`log(Line,, GetFuncName());
+
+	// Entries
+
+	foreach MissionManager.SpawnDistributionLists(CurrentList)
+	{
+		foreach CurrentList.SpawnDistribution(CurrentEntry)
+		{
+			LineElements.Length = 0;
+
+			LineElements.AddItem(string(CurrentList.ListID));
+			LineElements.AddItem(string(CurrentEntry.Template));
+			LineElements.AddItem(string(CurrentEntry.MinForceLevel));
+			LineElements.AddItem(string(CurrentEntry.MaxForceLevel));
+			LineElements.AddItem(string(CurrentEntry.MaxCharactersPerGroup));
+			LineElements.AddItem(string(CurrentEntry.SpawnWeight));
+			
+			JoinArray(LineElements, Line, ",");
+			`log(Line,, GetFuncName());
+		}
+	}
+
+	`log("=========================== END",, GetFuncName());
+}

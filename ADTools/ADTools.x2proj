@@ -29,6 +29,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\ADTools.int" />
+    <Content Include="Src\ADTools\Classes\AD_TestObj.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\ADTools\Classes\ConfigContainer.uc">
       <SubType>Content</SubType>
     </Content>
