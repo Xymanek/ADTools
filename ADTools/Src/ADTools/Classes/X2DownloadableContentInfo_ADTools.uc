@@ -433,3 +433,26 @@ exec function AD_DumpSpawnDistributionLists ()
 
 	`log("=========================== END",, GetFuncName());
 }
+
+exec function AD_DumpChosenAppearChances ()
+{
+	local AppearChance CurrentAppearChance;
+	local int i;
+
+	local int Difficulty;
+	local int MissionCount;
+	local int PercentChance;
+
+	`log("=========================== BEGIN",, GetFuncName());
+
+	foreach class'XComGameState_AdventChosen'.default.AppearChances(CurrentAppearChance, i)
+	{
+		Difficulty = CurrentAppearChance.Difficulty;
+		MissionCount = CurrentAppearChance.MissionCount;
+		PercentChance = CurrentAppearChance.PercentChance;
+
+		`log(`showvar(i) @ `showvar(Difficulty) @ `showvar(MissionCount) @ `showvar(PercentChance),, GetFuncName());
+	}
+
+	`log("=========================== END",, GetFuncName());
+}
